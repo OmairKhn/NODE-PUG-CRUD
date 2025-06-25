@@ -13,6 +13,12 @@ app.use(userRoutes);
 const User = require("./db/user.js"); // Make sure this path is correct
 app.set("view engine", "pug");
 app.set("views", __dirname + "/views");
+const session = require("express-session");
+app.use(session({
+  secret: "yourSecretKey", // use a strong secret in production!
+  resave: false,
+  saveUninitialized: false
+}));
 
 app.get("/", async (req, res) => {
   const page = parseInt(req.query.page) || 1;
