@@ -2,5 +2,58 @@ doctype html
 html
   head
     title Node Pug CRUD
+    style.
+      body { margin: 0; font-family: Arial, sans-serif; background: #f7f7f7; }
+      .navbar {
+        background: #007bff;
+        color: #fff;
+        padding: 12px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .navbar .brand {
+        font-weight: bold;
+        font-size: 1.2em;
+        letter-spacing: 1px;
+      }
+      .navbar .nav-links a {
+        color: #fff;
+        text-decoration: none;
+        margin-left: 18px;
+        font-size: 1em;
+        transition: color 0.2s;
+      }
+      .navbar .nav-links a:hover {
+        color: #ffd700;
+      }
+      .navbar .user {
+        margin-left: 24px;
+        font-size: 1em;
+        font-weight: 500;
+      }
+      .container {
+        max-width: 900px;
+        margin: 32px auto;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        padding: 32px 24px;
+      }
   body
-    block content
+    .navbar
+      .brand Node Pug CRUD
+      .nav-links
+        if !session.userId
+          a(href="/login") Login
+          a(href="/register") Register
+        else
+          a(href="/todos") Todos
+          a(href="/logout") Logout
+          if currentUser
+            span.user Hello, #{currentUser.name}
+                    span.date-time-label Date/Time: 
+
+    .container
+      block content
+    

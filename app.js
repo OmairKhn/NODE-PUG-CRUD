@@ -1,54 +1,58 @@
+// const express = require("express");
 const express = require("express");
 const app = express();
-const port = 3000;
+const User = require("./db/user.js"); // Make sure this is at the top
+const port = 5000;
 const mongoose = require("mongoose");
 const userRoutes = require("./routes/user-route.js");
+const todoRoutes = require("./routes/todo-route.js");
 const cors = require("cors");
+const session = require("express-session");
+const methodOverride = require("method-override");
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-const methodOverride = require('method-override');
-app.use(methodOverride('_method'));
-app.use(userRoutes);
-const User = require("./db/user.js"); // Make sure this path is correct
+app.use(methodOverride("_method"));
+app.use(
+  session({
+    secret: "yourSecretKey",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
 app.set("view engine", "pug");
 app.set("views", __dirname + "/views");
-const session = require("express-session");
-app.use(session({
-  secret: "yourSecretKey", // use a strong secret in production!
-  resave: false,
-  saveUninitialized: false
-}));
+app.use(express.static("public")); // Serve static files from the public directory
 
-app.get("/", async (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = 5;
-  const searchTerm = req.query.search || "";
-  let filter = {};
-  if (searchTerm) {
-    filter = {
-      $or: [
-        { name: { $regex: searchTerm, $options: "i" } },
-        { email: { $regex: searchTerm, $options: "i" } },
-        { adress: { $regex: searchTerm, $options: "i" } },
-      ],
-    };
+app.use(async (req, res, next) => {
+  res.locals.session = req.session;
+  if (req.session.userId) {
+    try {
+      
+      const user = await User.findById(req.session.userId).lean();
+      res.locals.currentUser = user;
+    } catch (err) {
+      res.locals.currentUser = null;
+    }
+  } else {
+    res.locals.currentUser = null;
   }
-  const total = await User.countDocuments(filter);
-  const items = await User.find(filter)
-    .skip((page - 1) * limit)
-    .limit(limit);
-  res.render("index", {
-    items,
-    page,
-    totalPages: Math.ceil(total / limit),
-    searchTerm,
-  });
+  next();
 });
 
-app.get("/new", (req, res) => {
-  res.render("new");
+app.get("/", (req, res) => {
+  if (req.session.userId) {
+    // Redirect logged-in users to their todos
+    res.redirect("/todos");
+  } else {
+    // Redirect guests to login
+    res.redirect("/login");
+  }
 });
+
+app.use(userRoutes);
+app.use(todoRoutes);
 
 async function connectDB() {
   await mongoose.connect("mongodb://localhost:27017", {
@@ -56,8 +60,8 @@ async function connectDB() {
   });
   console.log("Connected to MongoDB");
 }
-connectDB().catch((error) => console.error(err));
+connectDB().catch((error) => console.error(error));
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+  console.log(`App listening on port ${port}`);
 });

@@ -1,6 +1,9 @@
 # Node modules
 node_modules/
-
+.env
+logs/
+*.log
+.vscode/
 # Logs
 logs/
 *.log

@@ -1,8 +1,73 @@
+//- extends layout
+
+//- block content
+//-   style.
+//-     .form-container {
+//-       max-width: 400px;
+//-       margin: 48px auto;
+//-       background: #fff;
+//-       border-radius: 8px;
+//-       box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+//-       padding: 32px 24px;
+//-     }
+//-     h1 {
+//-       margin-top: 0;
+//-       color: #333;
+//-       text-align: center;
+//-     }
+//-     form {
+//-       display: flex;
+//-       flex-direction: column;
+//-       gap: 18px;
+//-     }
+//-     input[type="text"], input[type="email"], input[type="number"], input[type="password"] {
+//-       padding: 10px 12px;
+//-       border: 1px solid #ccc;
+//-       border-radius: 4px;
+//-       font-size: 1em;
+//-       transition: border 0.2s;
+//-     }
+//-     input:focus {
+//-       border: 1.5px solid #007bff;
+//-       outline: none;
+//-     }
+//-     button[type="submit"] {
+//-       padding: 10px 0;
+//-       background: #007bff;
+//-       color: #fff;
+//-       border: none;
+//-       border-radius: 4px;
+//-       font-size: 1em;
+//-       cursor: pointer;
+//-       transition: background 0.2s;
+//-       margin-top: 8px;
+//-     }
+//-     button[type="submit"]:hover {
+//-       background: #0056b3;
+//-     }
+//-     @media (max-width: 500px) {
+//-       .form-container {
+//-         padding: 16px 4px;
+//-       }
+//-       h1 {
+//-         font-size: 1.3em;
+//-       }
+//-     }
+
+//-   .form-container
+//-     h1 Add New User
+//-     form(action="/users", method="POST")
+//-       input(type="text", name="name", placeholder="Enter name", required)
+//-       input(type="email", name="email", placeholder="Enter email", required)
+//-       input(type="number", name="age", placeholder="Enter age", min="0", required)
+//-       input(type="text", name="adress", placeholder="Enter address", required)
+//-       input(type="password", name="Password", placeholder="Enter password", required)
+//-       button(type="submit") Add
 extends layout
 
 block content
   style.
-    .form-container {
+    .register-container {
       max-width: 400px;
       margin: 48px auto;
       background: #fff;
@@ -10,17 +75,17 @@ block content
       box-shadow: 0 2px 8px rgba(0,0,0,0.07);
       padding: 32px 24px;
     }
-    h1 {
-      margin-top: 0;
-      color: #333;
+    h2 {
       text-align: center;
+      margin-bottom: 24px;
+      color: #007bff;
     }
     form {
       display: flex;
       flex-direction: column;
       gap: 18px;
     }
-    input[type="text"], input[type="email"], input[type="number"], input[type="password"] {
+    input[type="text"], input[type="email"], input[type="password"] {
       padding: 10px 12px;
       border: 1px solid #ccc;
       border-radius: 4px;
@@ -45,21 +110,24 @@ block content
     button[type="submit"]:hover {
       background: #0056b3;
     }
+    p[style] {
+      text-align: center;
+      margin-bottom: 12px;
+    }
     @media (max-width: 500px) {
-      .form-container {
+      .register-container {
         padding: 16px 4px;
       }
-      h1 {
+      h2 {
         font-size: 1.3em;
       }
     }
-
-  .form-container
-    h1 Add New User
-    form(action="/users", method="POST")
+  .register-container
+    h2 Register
+    if error
+      p(style="color:red") #{error}
+    form(action="/register", method="POST")
       input(type="text", name="name", placeholder="Enter name", required)
       input(type="email", name="email", placeholder="Enter email", required)
-      input(type="number", name="age", placeholder="Enter age", min="0", required)
-      input(type="text", name="adress", placeholder="Enter address", required)
       input(type="password", name="Password", placeholder="Enter password", required)
-      button(type="submit") Add
+      button(type="submit") Register
